@@ -1,20 +1,24 @@
 'use client'
 
+import { useState } from 'react'
+
 interface Preset {
   label: string
-  emoji: string
+  emoji?: string
+  dot?: boolean
+  region: string
   lat: number
   lng: number
   zoom: number
 }
 
 const PRESETS: Preset[] = [
-  { label: 'All Philippines', emoji: '🇵🇭', lat: 12.8797, lng: 121.774,  zoom: 6  },
-  { label: 'Manila',          emoji: '🏙️', lat: 14.5995, lng: 120.9842, zoom: 13 },
-  { label: 'El Nido',         emoji: '🏝️', lat: 11.1784, lng: 119.3876, zoom: 12 },
-  { label: 'Cebu',            emoji: '🌊', lat: 10.3157, lng: 123.8854, zoom: 12 },
-  { label: 'Bohol',           emoji: '🌋', lat: 9.85,   lng: 124.143,  zoom: 11 },
-  { label: 'Batanes',         emoji: '🏔️', lat: 20.448, lng: 121.971,  zoom: 11 },
+  { label: 'All Philippines', dot: true, region: 'all',    lat: 12.5,    lng: 122.0,   zoom: 7  },
+  { label: 'Manila',          emoji: '🏙️', region: 'manila', lat: 14.5995, lng: 120.9842, zoom: 11 },
+  { label: 'El Nido',         emoji: '🏝️', region: 'elnido', lat: 11.1784, lng: 119.3876, zoom: 11 },
+  { label: 'Cebu',            emoji: '🌊', region: 'cebu',   lat: 10.3157, lng: 123.8854, zoom: 10 },
+  { label: 'Bohol',           emoji: '🌋', region: 'bohol',  lat: 9.85,    lng: 124.143,  zoom: 10 },
+  { label: 'Batanes',         emoji: '🏔️', region: 'batanes',lat: 20.448,  lng: 121.971,  zoom: 10 },
 ]
 
 interface Props {
@@ -22,23 +26,65 @@ interface Props {
 }
 
 export default function AreaPresets({ onPresetClick }: Props) {
+  const [active, setActive] = useState('all')
+
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] flex gap-2 px-4 max-w-full overflow-x-auto no-scrollbar">
-      {PRESETS.map((p) => (
-        <button
-          key={p.label}
-          onClick={() => onPresetClick(p.lat, p.lng, p.zoom)}
-          className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium shadow-md transition-all active:scale-95 whitespace-nowrap"
-          style={{
-            backgroundColor: 'white',
-            color: '#1A5276',
-            border: '1px solid rgba(26,82,118,0.15)',
-          }}
-        >
-          <span>{p.emoji}</span>
-          <span>{p.label}</span>
-        </button>
-      ))}
+    <div
+      className="no-scrollbar"
+      style={{
+        display: 'flex',
+        gap: 8,
+        overflow: 'hidden',
+        overflowX: 'auto',
+        alignItems: 'center',
+        flex: 1,
+      }}
+    >
+      {PRESETS.map((p) => {
+        const isActive = active === p.region
+        return (
+          <button
+            key={p.region}
+            onClick={() => {
+              setActive(p.region)
+              onPresetClick(p.lat, p.lng, p.zoom)
+            }}
+            style={{
+              flexShrink: 0,
+              border: '1px solid',
+              borderColor: isActive ? '#1C1C1E' : '#E6E2D8',
+              background: isActive ? '#1C1C1E' : 'rgba(255,255,255,.96)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              height: 44,
+              padding: '0 14px',
+              borderRadius: 999,
+              fontSize: 13,
+              fontWeight: 500,
+              color: isActive ? '#fff' : '#4B4B50',
+              whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              boxShadow: '0 6px 18px -8px rgba(20,30,45,.18), 0 2px 6px rgba(20,30,45,.05)',
+              cursor: 'pointer',
+              transition: 'all .12s ease',
+              outline: 'none',
+            }}
+          >
+            {p.dot && (
+              <span style={{
+                width: 6, height: 6,
+                borderRadius: '50%',
+                background: '#F4C430',
+                display: 'inline-block',
+              }} />
+            )}
+            {p.emoji && <span style={{ fontSize: 14, lineHeight: 1 }}>{p.emoji}</span>}
+            <span>{p.label}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }

@@ -1,62 +1,168 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
 @import "tailwindcss";
 
 :root {
-  --ocean: #1A5276;
-  --coral: #D95F3B;
-  --gold: #F2A830;
-  --ink: #1C1C1E;
+  --bg:      #FAF9F6;
+  --bg-2:    #F2EFE8;
+  --paper:   #FFFFFF;
+  --ink:     #1C1C1E;
+  --ink-2:   #4B4B50;
+  --ink-3:   #8A8A90;
+  --line:    #E6E2D8;
+  --line-2:  #EFEBE2;
+  --ocean:   #1A5276;
+  --ocean-2: #15435F;
+  --ocean-3: #E5EEF4;
+  --sun:     #F4C430;
+  --sun-2:   #E0B017;
+
+  --c-food:    #E74C3C;
+  --c-spot:    #27AE60;
+  --c-stay:    #8E44AD;
+  --c-transit: #E67E22;
+  --c-shop:    #2980B9;
+  --c-airport: #7F8C8D;
+
+  --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --sans:  "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono:  "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --r-sm: 8px;
+  --r:    12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --shadow-sm: 0 1px 2px rgba(20,30,45,.05), 0 1px 3px rgba(20,30,45,.04);
+  --shadow:    0 6px 18px -8px rgba(20,30,45,.18), 0 2px 6px rgba(20,30,45,.05);
+  --shadow-lg: 0 24px 60px -20px rgba(20,30,45,.25), 0 8px 22px -10px rgba(20,30,45,.12);
 }
 
-html, body {
-  /* Warm tropical sand gradient */
-  background: linear-gradient(150deg, #F8E8C0 0%, #F0D090 35%, #E8BC68 70%, #DCA84C 100%);
-  color: var(--ink);
-  font-family: 'DM Sans', sans-serif;
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
   height: 100%;
+  background: #FAF9F6;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #FAF9F6;
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   overflow: hidden;
 }
 
 h1, h2, h3 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--serif);
 }
 
-/* Leaflet overrides */
+button { font-family: inherit; color: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; color: inherit; }
+
+/* ── App shell ── */
+.app {
+  display: grid !important;
+  grid-template-columns: 360px 1fr;
+  grid-template-rows: 1fr;
+  gap: 18px;
+  padding: 18px;
+  width: 100%;
+  height: 100dvh;
+  background:
+    radial-gradient(1200px 600px at -10% -10%, #F6EFD9 0%, transparent 60%),
+    radial-gradient(1000px 700px at 110% 110%, #E5EEF4 0%, transparent 55%),
+    #FAF9F6;
+}
+
+/* ── Legend panel ── */
+.legend-card {
+  height: 100%;
+  min-height: 0;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Map stage ── */
+.map-card {
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #DDE7EE;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Leaflet overrides ── */
 .leaflet-container {
-  background: #b8d4e4;
-  font-family: 'DM Sans', sans-serif;
+  background: #DDE7EE;
+  font-family: var(--sans);
 }
 
-/* Fix subpixel tile seam lines */
+.leaflet-tile-pane {
+  transform: translate3d(0,0,0);
+  backface-visibility: hidden;
+  filter: saturate(.85) brightness(1.02) contrast(.95);
+}
+
 .leaflet-tile {
   image-rendering: auto;
   border: 0 !important;
+  outline: none !important;
+  margin: 0 !important;
 }
 
-.leaflet-control-zoom {
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+.leaflet-control-zoom { display: none !important; }
+
+.leaflet-control-attribution {
+  font-family: var(--sans);
+  font-size: 10px !important;
+  background: rgba(255,255,255,.85) !important;
+  border-top-left-radius: 8px;
 }
 
-.leaflet-control-zoom a {
-  background: white !important;
-  color: var(--ocean) !important;
-  border: none !important;
-  font-size: 18px !important;
-  line-height: 30px !important;
+/* pin markers rendered fully inline via SVG in Map.tsx */
+
+/* ── Leaflet popup overrides ── */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.leaflet-popup-content { margin: 0; width: 220px !important; }
+.mini-pop { padding: 12px 14px; font-family: var(--sans); }
+.mini-pop .badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.mini-pop .badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+.mini-pop h4 {
+  font-family: var(--serif); font-size: 16px; font-weight: 600;
+  margin: 4px 0 2px; letter-spacing: -0.005em;
+}
+.mini-pop .addr { font-size: 12px; color: var(--ink-3); margin: 0 0 8px; }
+.mini-pop .open-btn {
+  font-size: 12px; font-weight: 600; color: var(--ocean);
+  cursor: pointer; background: 0; border: 0; padding: 0;
 }
 
-.leaflet-control-zoom a:hover {
-  background: var(--ocean) !important;
-  color: white !important;
-}
-
-/* Bottom sheet */
+/* ── Bottom sheets ── */
 .bottom-sheet-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(15,25,40,.35);
   z-index: 800;
   backdrop-filter: blur(2px);
 }
@@ -66,50 +172,90 @@ h1, h2, h3 {
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
-  border-radius: 20px 20px 0 0;
+  background: var(--paper);
+  border-radius: 22px 22px 0 0;
   z-index: 900;
   max-height: 90dvh;
   overflow-y: auto;
   padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -4px 30px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.28s cubic-bezier(.2,.7,.2,1);
 }
 
-/* Legend panel — floating glassmorphic card (used on mobile fallback) */
+/* ── Pin detail slide-in card ── */
+.detail-card {
+  position: absolute;
+  right: 16px;
+  top: 76px;
+  width: 340px;
+  z-index: 650;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  transform: translateX(380px);
+  transition: transform .25s cubic-bezier(.2,.7,.2,1);
+}
+.detail-card.is-open { transform: translateX(0); }
+
+/* ── Mobile legend ── */
 .legend-panel {
   position: fixed;
   top: 50%;
   left: 16px;
-  width: 248px;
-  background: rgba(255, 251, 240, 0.88);
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
-  border: 1px solid rgba(255, 220, 140, 0.55);
-  border-radius: 20px;
+  width: 272px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(28px) saturate(180%) brightness(1.04);
+  -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.04);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--r-xl);
   z-index: 700;
   box-shadow:
-    0 8px 32px rgba(140, 90, 20, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255,255,255,0.6);
-  transform: translateX(calc(-100% - 24px)) translateY(-50%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.3s ease;
+    0 20px 56px rgba(20, 30, 45, 0.20),
+    0 2px 8px rgba(20, 30, 45, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transform: translateX(calc(-100% - 32px)) translateY(-50%);
+  transition: transform .38s cubic-bezier(.4,0,.2,1), opacity .28s ease;
   opacity: 0;
-  max-height: calc(100dvh - 48px);
+  max-height: calc(100dvh - 80px);
   overflow-y: auto;
+  pointer-events: none;
 }
-
 .legend-panel.open {
   transform: translateX(0) translateY(-50%);
   opacity: 1;
+  pointer-events: auto;
 }
 
-/* Slide up animation */
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr !important;
+    padding: 10px;
+    gap: 0;
+  }
+  .legend-card { display: none !important; }
+  .map-card { border-radius: 18px; }
+  .detail-card {
+    left: 12px; right: 12px; top: auto; bottom: 96px;
+    width: auto;
+    transform: translateY(140%);
+  }
+  .detail-card.is-open { transform: translateY(0); }
+}
+
+@media (min-width: 901px) {
+  .legend-mobile-container { display: none !important; }
+}
+
+/* ── Animations ── */
 @keyframes slideUp {
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
 }
 
-.bottom-sheet {
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* ── Utility ── */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
