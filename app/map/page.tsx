@@ -139,22 +139,45 @@ export default function MapPage() {
   }
 
   return (
-    /*
-     * Mobile  : full-screen column  — map on top (flex-1), legend strip at bottom
-     * Desktop : centered 80 vh row  — legend 25 % left, map 75 % right
-     */
-    <div className="h-[100dvh] md:flex md:items-center md:justify-center">
+    <div style={{
+      minHeight: '100dvh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+      boxSizing: 'border-box',
+    }}>
+      {/* ── Card ── */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        width: '100%',
+        height: '80vh',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        boxShadow: '0 20px 60px rgba(140, 90, 20, 0.28), 0 4px 16px rgba(0,0,0,0.10)',
+        border: '1.5px solid rgba(255, 220, 140, 0.55)',
+      }}>
 
-      {/* Card wrapper */}
-      <div
-        className={[
-          'flex flex-col h-full',
-          'md:flex-row md:h-[80vh] md:mx-6 md:rounded-[20px] md:overflow-hidden',
-          'md:shadow-[0_12px_48px_rgba(0,0,0,0.22)] md:border md:border-white/60',
-        ].join(' ')}
-      >
-        {/* ── Map column (top on mobile, right on desktop) ── */}
-        <div className="relative order-1 flex-1 overflow-hidden md:order-2">
+        {/* Legend — 25% */}
+        <div style={{
+          width: '25%',
+          flexShrink: 0,
+          overflowY: 'auto',
+          background: 'linear-gradient(180deg, #FFFBF0 0%, #FFF5DC 100%)',
+          borderRight: '1.5px solid rgba(200, 160, 70, 0.25)',
+        }}>
+          <Legend
+            embedded
+            open={true}
+            visibleCategories={visibleCategories}
+            onToggle={() => {}}
+            onCategoryToggle={toggleCategory}
+          />
+        </div>
+
+        {/* Map — 75% */}
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
           <Map
             ref={mapRef}
             pins={pins}
@@ -169,34 +192,46 @@ export default function MapPage() {
             <button
               onClick={handleAddClick}
               aria-label="Add pin"
-              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[500] w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-2xl font-light transition-transform active:scale-95"
-              style={{ backgroundColor: '#1A5276', color: 'white' }}
+              style={{
+                position: 'absolute',
+                bottom: 24,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 500,
+                width: 56,
+                height: 56,
+                borderRadius: '50%',
+                backgroundColor: '#1A5276',
+                color: 'white',
+                fontSize: 28,
+                fontWeight: 300,
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(26,82,118,0.45)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
               +
             </button>
           )}
 
           {profile && sheet.type === 'none' && (
-            <div className="absolute bottom-6 right-4 z-[500]">
-              <div className="px-3 py-1.5 rounded-full bg-white/90 shadow text-xs font-medium text-gray-500">
+            <div style={{ position: 'absolute', bottom: 24, right: 16, zIndex: 500 }}>
+              <div style={{
+                padding: '6px 14px',
+                borderRadius: 999,
+                background: 'rgba(255,255,255,0.92)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                fontSize: 12,
+                fontWeight: 500,
+                color: '#555',
+              }}>
                 {profile.display_name}
               </div>
             </div>
           )}
-        </div>
-
-        {/* ── Legend column (bottom strip on mobile, left sidebar on desktop) ── */}
-        <div
-          className="legend-col order-2 flex-shrink-0 overflow-y-auto md:order-1 md:w-1/4 md:h-full"
-          style={{ background: 'var(--panel-bg)' }}
-        >
-          <Legend
-            embedded
-            open={true}
-            visibleCategories={visibleCategories}
-            onToggle={() => {}}
-            onCategoryToggle={toggleCategory}
-          />
         </div>
       </div>
 
