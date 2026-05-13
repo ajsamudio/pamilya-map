@@ -35,13 +35,7 @@ export default function MapPage() {
     new Set(CATEGORIES.map((c) => c.id))
   )
 
-  const [legendOpen, setLegendOpen] = useState(false)
   const [sheet, setSheet] = useState<Sheet>({ type: 'none' })
-
-  // Open legend by default on desktop
-  useEffect(() => {
-    if (window.matchMedia('(min-width: 768px)').matches) setLegendOpen(true)
-  }, [])
 
   // Resolve auth session in background — doesn't block map render
   useEffect(() => {
@@ -145,51 +139,73 @@ export default function MapPage() {
   }
 
   return (
-    <div className="fixed inset-0">
-      {/* Map — always visible */}
-      <Map
-        ref={mapRef}
-        pins={pins}
-        visibleCategories={visibleCategories}
-        onPinClick={(pin) => setSheet({ type: 'pin', pin })}
-        onMapClick={handleMapClick}
-      />
+    <div className="flex items-center justify-center h-screen">
+      {/* Main content area — 80% tall, two columns */}
+      <div
+        className="flex w-full overflow-hidden"
+        style={{
+          height: '80vh',
+          borderRadius: '20px',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+          border: '1px solid rgba(255,255,255,0.5)',
+          margin: '0 24px',
+        }}
+      >
+        {/* Legend — left 25% */}
+        <div
+          className="flex-shrink-0 overflow-y-auto"
+          style={{
+            width: '25%',
+            background: 'rgba(250,249,246,0.97)',
+            borderRight: '1px solid rgba(0,0,0,0.07)',
+          }}
+        >
+          <Legend
+            embedded
+            open={true}
+            visibleCategories={visibleCategories}
+            onToggle={() => {}}
+            onCategoryToggle={toggleCategory}
+          />
+        </div>
 
-      {/* Area presets — top center, offset from hamburger */}
-      <div className="ml-16">
-        <AreaPresets onPresetClick={handlePreset} />
+        {/* Map — right 75% */}
+        <div className="relative flex-1 overflow-hidden">
+          <Map
+            ref={mapRef}
+            pins={pins}
+            visibleCategories={visibleCategories}
+            onPinClick={(pin) => setSheet({ type: 'pin', pin })}
+            onMapClick={handleMapClick}
+          />
+
+          {/* Area presets — top center */}
+          <AreaPresets onPresetClick={handlePreset} />
+
+          {/* Add pin FAB — bottom center */}
+          {sheet.type === 'none' && (
+            <button
+              onClick={handleAddClick}
+              aria-label="Add pin"
+              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[500] w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-2xl font-light transition-transform active:scale-95"
+              style={{ backgroundColor: '#1A5276', color: 'white' }}
+            >
+              +
+            </button>
+          )}
+
+          {/* Signed-in user pill — bottom right */}
+          {profile && sheet.type === 'none' && (
+            <div className="absolute bottom-6 right-4 z-[500]">
+              <div className="px-3 py-1.5 rounded-full bg-white shadow text-xs font-medium text-gray-500">
+                {profile.display_name}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Legend — top left */}
-      <Legend
-        open={legendOpen}
-        visibleCategories={visibleCategories}
-        onToggle={() => setLegendOpen((o) => !o)}
-        onCategoryToggle={toggleCategory}
-      />
-
-      {/* Add pin FAB — bottom center (always shown) */}
-      {sheet.type === 'none' && (
-        <button
-          onClick={handleAddClick}
-          aria-label="Add pin"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[500] w-14 h-14 rounded-full shadow-xl flex items-center justify-center text-2xl font-light transition-transform active:scale-95"
-          style={{ backgroundColor: '#1A5276', color: 'white' }}
-        >
-          +
-        </button>
-      )}
-
-      {/* Signed-in user pill — bottom right */}
-      {profile && sheet.type === 'none' && (
-        <div className="fixed bottom-6 right-4 z-[500]">
-          <div className="px-3 py-1.5 rounded-full bg-white shadow text-xs font-medium text-gray-500">
-            {profile.display_name}
-          </div>
-        </div>
-      )}
-
-      {/* Sheets */}
+      {/* Sheets — fixed overlays over the whole viewport */}
       {sheet.type === 'auth' && (
         <AuthSheet onClose={closeSheet} />
       )}

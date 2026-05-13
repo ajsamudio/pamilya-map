@@ -54,10 +54,20 @@ const Map = forwardRef<MapHandle, Props>(function Map(
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
 
+    // Philippines bounds with a little padding
+    const philippinesBounds = L.latLngBounds(
+      [4.2, 114.0],   // SW corner
+      [21.5, 128.5],  // NE corner
+    )
+
     const map = L.map(containerRef.current, {
       center: [12.8797, 121.774],
       zoom: 6,
+      minZoom: 6,
+      maxZoom: 19,
       zoomControl: false,
+      maxBounds: philippinesBounds,
+      maxBoundsViscosity: 1.0,
     })
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

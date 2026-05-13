@@ -23,7 +23,7 @@ interface Props {
 
 export default function AreaPresets({ onPresetClick }: Props) {
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[500] flex gap-2 px-4 max-w-full overflow-x-auto no-scrollbar">
+    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] flex gap-2 px-4 max-w-full overflow-x-auto no-scrollbar">
       {PRESETS.map((p) => (
         <button
           key={p.label}
