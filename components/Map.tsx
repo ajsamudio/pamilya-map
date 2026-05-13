@@ -73,6 +73,7 @@ const Map = forwardRef<MapHandle, Props>(function Map(
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
       maxZoom: 19,
+      noWrap: true,
     }).addTo(map)
 
     L.control.zoom({ position: 'bottomright' }).addTo(map)

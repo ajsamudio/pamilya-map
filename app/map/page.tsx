@@ -139,38 +139,22 @@ export default function MapPage() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      {/* Main content area — 80% tall, two columns */}
-      <div
-        className="flex w-full overflow-hidden"
-        style={{
-          height: '80vh',
-          borderRadius: '20px',
-          boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
-          border: '1px solid rgba(255,255,255,0.5)',
-          margin: '0 24px',
-        }}
-      >
-        {/* Legend — left 25% */}
-        <div
-          className="flex-shrink-0 overflow-y-auto"
-          style={{
-            width: '25%',
-            background: 'rgba(250,249,246,0.97)',
-            borderRight: '1px solid rgba(0,0,0,0.07)',
-          }}
-        >
-          <Legend
-            embedded
-            open={true}
-            visibleCategories={visibleCategories}
-            onToggle={() => {}}
-            onCategoryToggle={toggleCategory}
-          />
-        </div>
+    /*
+     * Mobile  : full-screen column  — map on top (flex-1), legend strip at bottom
+     * Desktop : centered 80 vh row  — legend 25 % left, map 75 % right
+     */
+    <div className="h-[100dvh] md:flex md:items-center md:justify-center">
 
-        {/* Map — right 75% */}
-        <div className="relative flex-1 overflow-hidden">
+      {/* Card wrapper */}
+      <div
+        className={[
+          'flex flex-col h-full',
+          'md:flex-row md:h-[80vh] md:mx-6 md:rounded-[20px] md:overflow-hidden',
+          'md:shadow-[0_12px_48px_rgba(0,0,0,0.22)] md:border md:border-white/60',
+        ].join(' ')}
+      >
+        {/* ── Map column (top on mobile, right on desktop) ── */}
+        <div className="relative order-1 flex-1 overflow-hidden md:order-2">
           <Map
             ref={mapRef}
             pins={pins}
@@ -179,10 +163,8 @@ export default function MapPage() {
             onMapClick={handleMapClick}
           />
 
-          {/* Area presets — top center */}
           <AreaPresets onPresetClick={handlePreset} />
 
-          {/* Add pin FAB — bottom center */}
           {sheet.type === 'none' && (
             <button
               onClick={handleAddClick}
@@ -194,21 +176,32 @@ export default function MapPage() {
             </button>
           )}
 
-          {/* Signed-in user pill — bottom right */}
           {profile && sheet.type === 'none' && (
             <div className="absolute bottom-6 right-4 z-[500]">
-              <div className="px-3 py-1.5 rounded-full bg-white shadow text-xs font-medium text-gray-500">
+              <div className="px-3 py-1.5 rounded-full bg-white/90 shadow text-xs font-medium text-gray-500">
                 {profile.display_name}
               </div>
             </div>
           )}
         </div>
+
+        {/* ── Legend column (bottom strip on mobile, left sidebar on desktop) ── */}
+        <div
+          className="legend-col order-2 flex-shrink-0 overflow-y-auto md:order-1 md:w-1/4 md:h-full"
+          style={{ background: 'var(--panel-bg)' }}
+        >
+          <Legend
+            embedded
+            open={true}
+            visibleCategories={visibleCategories}
+            onToggle={() => {}}
+            onCategoryToggle={toggleCategory}
+          />
+        </div>
       </div>
 
-      {/* Sheets — fixed overlays over the whole viewport */}
-      {sheet.type === 'auth' && (
-        <AuthSheet onClose={closeSheet} />
-      )}
+      {/* Sheets */}
+      {sheet.type === 'auth' && <AuthSheet onClose={closeSheet} />}
 
       {sheet.type === 'add' && userId && (
         <AddPinModal

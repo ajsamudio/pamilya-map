@@ -3,14 +3,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #FAF9F6;
+  --bg-from: #F5E6C8;
+  --bg-to:   #E2C98A;
+  --panel-bg: #FFFAF2;
   --ocean: #1A5276;
+  --coral: #D95F3B;
   --gold: #F4C430;
   --ink: #1C1C1E;
 }
 
 html, body {
-  background-color: var(--bg);
+  background: linear-gradient(145deg, #F5E6C8 0%, #EDD9A3 45%, #E2C98A 100%);
   color: var(--ink);
   font-family: 'DM Sans', sans-serif;
   height: 100%;
@@ -23,8 +26,14 @@ h1, h2, h3 {
 
 /* Leaflet overrides */
 .leaflet-container {
-  background: #e8e0d8;
+  background: #c8dce8;
   font-family: 'DM Sans', sans-serif;
+}
+
+/* Fix subpixel tile seam lines */
+.leaflet-tile {
+  image-rendering: auto;
+  border: 0 !important;
 }
 
 .leaflet-control-zoom {
@@ -95,6 +104,20 @@ h1, h2, h3 {
 .legend-panel.open {
   transform: translateX(0) translateY(-50%);
   opacity: 1;
+}
+
+/* Legend responsive column */
+.legend-col {
+  max-height: 38vh;
+  border-top: 1px solid rgba(0,0,0,0.07);
+}
+
+@media (min-width: 768px) {
+  .legend-col {
+    max-height: none;
+    border-top: none;
+    border-right: 1px solid rgba(0,0,0,0.07);
+  }
 }
 
 /* Slide up animation */
